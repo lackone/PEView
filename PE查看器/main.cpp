@@ -6,6 +6,7 @@
 #include "Tools.h"
 
 HINSTANCE g_hInstance;
+UINT_PTR g_timer;
 HWND hListProcess;
 HWND hListModule;
 ListCtrl lcProcess;
@@ -86,6 +87,14 @@ INT_PTR CALLBACK AboutDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 }
 
 /**
+ * 定时器
+ */
+VOID CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+{
+	flushProcessList();
+}
+
+/**
  * 主对话框消息处理函数
  */
 INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -111,10 +120,13 @@ INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		//更新进程列表
 		flushProcessList();
+
+		//g_timer = SetTimer(hwnd, 1, 5000, TimerProc);
 	}
 	return TRUE;
 	case WM_CLOSE:
 	{
+		KillTimer(hwnd, g_timer);
 		EndDialog(hwnd, 0);
 	}
 	return TRUE;
@@ -149,6 +161,7 @@ INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDC_BUTTON_EXIT:
 		{
 			//退出
+			KillTimer(hwnd, g_timer);
 			EndDialog(hwnd, 0);
 		}
 		break;
