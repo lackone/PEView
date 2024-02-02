@@ -72,3 +72,21 @@ VOID Tools::TCHARToChar(IN LPCTSTR tstr, OUT LPSTR* str)
 	WideCharToMultiByte(CP_ACP, 0, tstr, -1, buf, size_needed, NULL, NULL);
 	*str = buf;
 }
+
+/**
+ * 将DWORD转换为TCHAR
+ */
+VOID Tools::DWordToTStr(IN DWORD data, OUT LPTSTR buf, IN SIZE_T len)
+{
+	memset(buf, 0, len * sizeof(TCHAR));
+	_stprintf_s(buf, len, TEXT("%08x"), data);
+}
+
+/**
+ * 将WORD转换为TCHAR
+ */
+VOID Tools::WordToTStr(IN WORD data, OUT LPTSTR buf, IN SIZE_T len)
+{
+	memset(buf, 0, len * sizeof(TCHAR));
+	_stprintf_s(buf, MAX_PATH, TEXT("%04x"), data);
+}

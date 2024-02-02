@@ -129,11 +129,13 @@
   <ItemGroup>
     <ClCompile Include="ListCtrl.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PETools.cpp" />
     <ClCompile Include="ProcessTools.cpp" />
     <ClCompile Include="Tools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ListCtrl.h" />
+    <ClInclude Include="PETools.h" />
     <ClInclude Include="ProcessTools.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Tools.h" />

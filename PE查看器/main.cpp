@@ -4,6 +4,7 @@
 #include "ListCtrl.h"
 #include "ProcessTools.h"
 #include "Tools.h"
+#include "PETools.h"
 
 HINSTANCE g_hInstance;
 UINT_PTR g_timer;
@@ -16,6 +17,7 @@ ListCtrl lcModule;
 //工具对象
 ProcessTools pt;
 Tools tools;
+PETools pe;
 //进程列表排序
 BOOL pidAsc = TRUE;
 BOOL imageBaseAsc = TRUE;
@@ -24,6 +26,9 @@ BOOL imageSizeAsc = TRUE;
 int LastColumnIndex = 1;
 //最后点击的行PID
 DWORD LastRowPID = -1;
+//所选EXE的路径
+TCHAR exePath[MAX_PATH]{ 0 };
+LPVOID exeFileBuffer = NULL;
 
 /**
  * 更新进程列表
@@ -153,6 +158,101 @@ INT_PTR CALLBACK AboutDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	case WM_CLOSE:
 		EndDialog(hwnd, 0);
 		return TRUE;
+	}
+	return FALSE;
+}
+
+/**
+ * PE查看器弹窗
+ */
+INT_PTR CALLBACK PeInfoDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_CLOSE:
+	{
+		EndDialog(hwnd, 0);
+	}
+	return TRUE;
+	case WM_INITDIALOG:
+	{
+		//读取PE文件
+		pe.ReadPEFile(exePath, &exeFileBuffer);
+
+		//获取DOS头
+		PIMAGE_DOS_HEADER dosHeader = pe.GetDosHeader(exeFileBuffer);
+		//获取NT头
+		PIMAGE_NT_HEADERS ntHeader = pe.GetNTHeader(exeFileBuffer);
+		//获取标准PE头
+		PIMAGE_FILE_HEADER fileHeader = pe.GetFileHeader(exeFileBuffer);
+		//获取可选PE头
+		PIMAGE_OPTIONAL_HEADER optHeader = pe.GetOptionHeader(exeFileBuffer);
+
+		TCHAR buf[MAX_PATH]{ 0 };
+
+		tools.DWordToTStr(optHeader->AddressOfEntryPoint, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_AddressOfEntryPoint), buf);
+
+		tools.DWordToTStr(optHeader->ImageBase, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_ImageBase), buf);
+
+		tools.DWordToTStr(optHeader->SizeOfImage, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_SizeOfImage), buf);
+
+		tools.DWordToTStr(optHeader->BaseOfCode, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_BaseOfCode), buf);
+
+		tools.DWordToTStr(optHeader->BaseOfData, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_BaseOfData), buf);
+
+		tools.DWordToTStr(optHeader->SectionAlignment, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_SectionAlignment), buf);
+
+		tools.DWordToTStr(optHeader->FileAlignment, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_FileAlignment), buf);
+
+		tools.WordToTStr(optHeader->Magic, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_Magic), buf);
+
+		tools.WordToTStr(optHeader->Subsystem, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_Subsystem), buf);
+
+		tools.WordToTStr(fileHeader->NumberOfSections, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_NumberOfSections), buf);
+
+		tools.DWordToTStr(fileHeader->TimeDateStamp, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_TimeDateStamp), buf);
+
+		tools.DWordToTStr(optHeader->SizeOfHeaders, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_SizeOfHeaders), buf);
+
+		tools.WordToTStr(fileHeader->Characteristics, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_Characteristics), buf);
+
+		tools.DWordToTStr(optHeader->CheckSum, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_CheckSum), buf);
+
+		tools.WordToTStr(fileHeader->SizeOfOptionalHeader, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_SizeOfOptionalHeader), buf);
+
+		tools.DWordToTStr(optHeader->NumberOfRvaAndSizes, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_NumberOfRvaAndSizes), buf);
+	}
+	return TRUE;
+	case WM_COMMAND:
+	{
+		switch (LOWORD(wParam))
+		{
+		case IDC_BUTTON_PE_INFO_EXIT:
+			EndDialog(hwnd, 0);
+			break;
+		case IDC_BUTTON_PE_INFO_DIR:
+			break;
+		case IDC_BUTTON_PE_INFO_SECTION:
+			break;
+		}
+	}
+	return TRUE;
 	}
 	return FALSE;
 }
@@ -307,6 +407,33 @@ INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDC_BUTTON_PE_VIEW:
 		{
 			//PE查看器
+			OPENFILENAME ofn{ 0 };
+
+			memset(exePath, 0, MAX_PATH * sizeof(TCHAR));
+
+			ofn.lStructSize = sizeof(ofn);
+			ofn.hwndOwner = NULL;
+			ofn.lpstrFile = exePath;
+			ofn.nMaxFile = MAX_PATH;
+			ofn.lpstrFilter = TEXT("EXE Files (*.exe)\0*.exe\0");
+			ofn.nFilterIndex = 1;
+			ofn.lpstrFileTitle = NULL;
+			ofn.nMaxFileTitle = 0;
+			ofn.lpstrInitialDir = NULL;
+			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+			if (!GetOpenFileName(&ofn))
+			{
+				MessageBox(hwnd, TEXT("请选择一个PE文件"), TEXT("错误"), MB_OK);
+				return FALSE;
+			}
+			if (_tcslen(exePath) <= 0)
+			{
+				MessageBox(hwnd, TEXT("请选择一个PE文件"), TEXT("错误"), MB_OK);
+				return FALSE;
+			}
+
+			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG_PE_INFO), hwnd, PeInfoDlgProc);
 		}
 		break;
 		case IDC_BUTTON_EXIT:
