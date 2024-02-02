@@ -11,9 +11,11 @@ UINT_PTR g_timer;
 //窗口句柄
 HWND hListProcess;
 HWND hListModule;
+HWND hListSection;
 //控件类
 ListCtrl lcProcess;
 ListCtrl lcModule;
+ListCtrl lcSection;
 //工具对象
 ProcessTools pt;
 Tools tools;
@@ -149,6 +151,46 @@ VOID flushModuleList(DWORD pid)
 }
 
 /**
+ * 更新节表
+ */
+VOID flushSectionList()
+{
+	std::vector<SectionItem> vsi = pe.GetSectionList(exeFileBuffer);
+	std::vector<SectionItem>::iterator it;
+
+	LPCTSTR row[6]{ 0 };
+
+	lcSection.ClearAllRows();
+
+	for (it = vsi.begin(); it != vsi.end(); ++it)
+	{
+		tools.CHARToTChar(it->name, (LPTSTR*)(&row[0]));
+
+		TCHAR buf1[MAX_PATH]{ 0 };
+		tools.DWordToTStr(it->fileOffset, buf1, MAX_PATH);
+		row[1] = buf1;
+
+		TCHAR buf2[MAX_PATH]{ 0 };
+		tools.DWordToTStr(it->fileSize, buf2, MAX_PATH);
+		row[2] = buf2;
+
+		TCHAR buf3[MAX_PATH]{ 0 };
+		tools.DWordToTStr(it->memoryOffset, buf3, MAX_PATH);
+		row[3] = buf3;
+
+		TCHAR buf4[MAX_PATH]{ 0 };
+		tools.DWordToTStr(it->memorySize, buf4, MAX_PATH);
+		row[4] = buf4;
+
+		TCHAR buf5[MAX_PATH]{ 0 };
+		tools.DWordToTStr(it->attribute, buf5, MAX_PATH);
+		row[5] = buf5;
+
+		lcSection.AddOneRow(row, 6);
+	}
+}
+
+/**
  * 关于对话框消息处理函数
  */
 INT_PTR CALLBACK AboutDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -158,6 +200,33 @@ INT_PTR CALLBACK AboutDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	case WM_CLOSE:
 		EndDialog(hwnd, 0);
 		return TRUE;
+	}
+	return FALSE;
+}
+
+/**
+ * 节表弹窗
+ */
+INT_PTR CALLBACK SectionDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_CLOSE:
+		EndDialog(hwnd, 0);
+		return TRUE;
+	case WM_INITDIALOG:
+	{
+		hListSection = GetDlgItem(hwnd, IDC_LIST_SECTION);
+
+		LPCTSTR sectionCols[] = { TEXT("节名"), TEXT("文件偏移"), TEXT("文件大小"), TEXT("内存偏移"), TEXT("内存大小"), TEXT("节区属性") };
+		lcSection.SetHwnd(hListSection);
+		lcSection.SetId(IDC_LIST_PROCESS);
+		lcSection.Init();
+		lcSection.AddColumn(sectionCols, 6);
+
+		flushSectionList();
+	}
+	return TRUE;
 	}
 	return FALSE;
 }
@@ -249,6 +318,7 @@ INT_PTR CALLBACK PeInfoDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		case IDC_BUTTON_PE_INFO_DIR:
 			break;
 		case IDC_BUTTON_PE_INFO_SECTION:
+			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG_SECTION), hwnd, SectionDlgProc);
 			break;
 		}
 	}

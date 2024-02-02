@@ -74,6 +74,17 @@ VOID Tools::TCHARToChar(IN LPCTSTR tstr, OUT LPSTR* str)
 }
 
 /**
+ * 将CHAR转换成TCHAR
+ */
+VOID Tools::CHARToTChar(IN LPCSTR str, OUT LPTSTR* tstr)
+{
+	int size_needed = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
+	LPTSTR buf = (LPTSTR)malloc(sizeof(CHAR) * size_needed);
+	MultiByteToWideChar(CP_ACP, 0, str, -1, buf, size_needed);
+	*tstr = buf;
+}
+
+/**
  * 将DWORD转换为TCHAR
  */
 VOID Tools::DWordToTStr(IN DWORD data, OUT LPTSTR buf, IN SIZE_T len)

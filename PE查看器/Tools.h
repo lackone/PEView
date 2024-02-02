@@ -16,6 +16,8 @@ public:
 	static VOID OutputDebugStringFormatA(const CHAR* format, ...);
 	//将TCHAR转换成CHAR
 	VOID TCHARToChar(IN LPCTSTR tstr, OUT LPSTR* str);
+	//将CHAR转换成TCHAR
+	VOID CHARToTChar(IN LPCSTR str, OUT LPTSTR *tstr);
 	//将DWORD转换为TCHAR
 	VOID DWordToTStr(IN DWORD data, OUT LPTSTR buf, IN SIZE_T len);
 	//将WORD转换为TCHAR

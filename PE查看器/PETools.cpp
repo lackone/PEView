@@ -186,3 +186,40 @@ PIMAGE_OPTIONAL_HEADER PETools::GetOptionHeader(IN LPVOID pFileBuffer)
 
 	return opt;
 }
+
+//获取节表
+std::vector<SectionItem> PETools::GetSectionList(IN LPVOID pFileBuffer)
+{
+	PIMAGE_DOS_HEADER dos;
+	PIMAGE_NT_HEADERS32 nt;
+	PIMAGE_FILE_HEADER pe;
+	PIMAGE_OPTIONAL_HEADER32 opt;
+	PIMAGE_SECTION_HEADER section;
+
+	std::vector<SectionItem> vsi;
+
+	dos = (PIMAGE_DOS_HEADER)pFileBuffer;
+	nt = (PIMAGE_NT_HEADERS32)((LPBYTE)dos + dos->e_lfanew);
+	pe = (PIMAGE_FILE_HEADER)((LPBYTE)nt + 4);
+	opt = (PIMAGE_OPTIONAL_HEADER32)((LPBYTE)pe + IMAGE_SIZEOF_FILE_HEADER);
+	section = (PIMAGE_SECTION_HEADER)((LPBYTE)opt + pe->SizeOfOptionalHeader);
+
+	for (int i = 0; i < pe->NumberOfSections; i++)
+	{
+		SectionItem si{ 0 };
+
+		strncpy_s(si.name, MAX_PATH, (char*)section->Name, 8);
+
+		si.fileOffset = section->PointerToRawData;
+		si.fileSize = section->SizeOfRawData;
+		si.memoryOffset = section->VirtualAddress;
+		si.memorySize = section->Misc.VirtualSize;
+		si.attribute = section->Characteristics;
+
+		vsi.push_back(si);
+
+		section++;
+	}
+
+	return vsi;
+}

@@ -2,6 +2,17 @@
 
 #include <windows.h>
 #include <stdio.h>
+#include <vector>
+
+typedef struct
+{
+	CHAR name[MAX_PATH]; //节名
+	DWORD fileOffset; //文件偏移
+	DWORD fileSize; //文件大小
+	DWORD memoryOffset; //内存偏移
+	DWORD memorySize; //内存大小
+	DWORD attribute; //节区属性
+} SectionItem, * PSectionItem;
 
 class PETools
 {
@@ -22,5 +33,7 @@ public:
 	PIMAGE_FILE_HEADER GetFileHeader(IN LPVOID pFileBuffer);
 	//获取可选PE头
 	PIMAGE_OPTIONAL_HEADER GetOptionHeader(IN LPVOID pFileBuffer);
+	//获取节表
+	std::vector<SectionItem> GetSectionList(IN LPVOID pFileBuffer);
 };
 

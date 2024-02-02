@@ -8,16 +8,16 @@
 
 typedef struct
 {
-	DWORD pid;
-	TCHAR szExeFile[MAX_PATH];
-	DWORD imageBase;
-	DWORD imageSize;
+	DWORD pid; //PID
+	TCHAR szExeFile[MAX_PATH]; //进程名
+	DWORD imageBase; //基址
+	DWORD imageSize; //镜像大小
 } ProcessItem, * PProcessItem;
 
 typedef struct
 {
-	TCHAR szName[MAX_PATH];
-	TCHAR szPath[MAX_PATH];
+	TCHAR szName[MAX_PATH]; //模块名
+	TCHAR szPath[MAX_PATH]; //模块路径
 } ModuleItem, * PModuleItem;
 
 class ProcessTools

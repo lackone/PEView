@@ -5,6 +5,7 @@
 #define IDD_DIALOG_MAIN                 101
 #define IDD_DIALOG_ABOUT                103
 #define IDD_DIALOG_PE_INFO              105
+#define IDD_DIALOG_SECTION              107
 #define IDC_BUTTON_PE_VIEW              1001
 #define IDC_BUTTON_ABOUT                1002
 #define IDC_BUTTON_EXIT                 1003
@@ -15,12 +16,13 @@
 #define IDC_BUTTON_PE_INFO_DIR          1008
 #define IDC_EDIT_AddressOfEntryPoint    1009
 #define IDC_EDIT_ImageBase              1010
+#define IDC_LIST1                       1010
+#define IDC_LIST_SECTION                1010
 #define IDC_EDIT_SizeOfImage            1011
 #define IDC_EDIT_BaseOfData             1012
 #define IDC_EDIT_BaseOfCode             1013
 #define IDC_EDIT_FileAlignment          1014
 #define IDC_EDIT_SectionAlignment       1015
-#define IDC_EDIT_Signature              1016
 #define IDC_EDIT_Magic                  1016
 #define IDC_EDIT_Subsystem              1017
 #define IDC_EDIT_NumberOfSections       1018
@@ -35,9 +37,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        107
+#define _APS_NEXT_RESOURCE_VALUE        109
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1010
+#define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
