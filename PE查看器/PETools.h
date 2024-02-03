@@ -35,5 +35,7 @@ public:
 	PIMAGE_OPTIONAL_HEADER GetOptionHeader(IN LPVOID pFileBuffer);
 	//获取节表
 	std::vector<SectionItem> GetSectionList(IN LPVOID pFileBuffer);
+	//获取目录
+	IMAGE_DATA_DIRECTORY* GetDataDirectory(IN LPVOID pFileBuffer);
 };
 

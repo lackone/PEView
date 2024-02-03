@@ -223,3 +223,18 @@ std::vector<SectionItem> PETools::GetSectionList(IN LPVOID pFileBuffer)
 
 	return vsi;
 }
+
+/**
+ * »ñÈ¡Ä¿Â¼
+ */
+IMAGE_DATA_DIRECTORY* PETools::GetDataDirectory(IN LPVOID pFileBuffer)
+{
+	PIMAGE_DOS_HEADER dos;
+	PIMAGE_NT_HEADERS32 nt;
+
+	dos = (PIMAGE_DOS_HEADER)pFileBuffer;
+	nt = (PIMAGE_NT_HEADERS32)((LPBYTE)dos + dos->e_lfanew);
+	IMAGE_DATA_DIRECTORY* dir = nt->OptionalHeader.DataDirectory;
+
+	return dir;
+}

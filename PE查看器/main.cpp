@@ -205,6 +205,131 @@ INT_PTR CALLBACK AboutDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 }
 
 /**
+ * Ä¿Â¼µ¯´°
+ */
+INT_PTR CALLBACK DirDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_CLOSE:
+	{
+		EndDialog(hwnd, 0);
+	}
+	return TRUE;
+	case WM_INITDIALOG:
+	{
+		IMAGE_DATA_DIRECTORY* dir = pe.GetDataDirectory(exeFileBuffer);
+
+		TCHAR buf[MAX_PATH]{ 0 };
+
+		tools.DWordToTStr(dir[0].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_EXPORT_RVA), buf);
+		tools.DWordToTStr(dir[0].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_EXPORT_SIZE), buf);
+
+		tools.DWordToTStr(dir[1].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_IMPORT_RVA), buf);
+		tools.DWordToTStr(dir[1].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_IMPORT_SIZE), buf);
+
+		tools.DWordToTStr(dir[2].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_RESOURCE_RVA), buf);
+		tools.DWordToTStr(dir[2].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_RESOURCE_SIZE), buf);
+
+		tools.DWordToTStr(dir[3].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_EXCEPTION_RVA), buf);
+		tools.DWordToTStr(dir[3].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_EXCEPTION_SIZE), buf);
+
+		tools.DWordToTStr(dir[4].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_SECURITY_RVA), buf);
+		tools.DWordToTStr(dir[4].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_SECURITY_SIZE), buf);
+
+		tools.DWordToTStr(dir[5].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_BASERELOC_RVA), buf);
+		tools.DWordToTStr(dir[5].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_BASERELOC_SIZE), buf);
+
+		tools.DWordToTStr(dir[6].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_DEBUG_RVA), buf);
+		tools.DWordToTStr(dir[6].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_DEBUG_SIZE), buf);
+
+		tools.DWordToTStr(dir[7].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_COPYRIGHT_RVA), buf);
+		tools.DWordToTStr(dir[7].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_COPYRIGHT_SIZE), buf);
+
+		tools.DWordToTStr(dir[8].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_GLOBALPTR_RVA), buf);
+		tools.DWordToTStr(dir[8].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_GLOBALPTR_SIZE), buf);
+
+		tools.DWordToTStr(dir[9].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_TLS_RVA), buf);
+		tools.DWordToTStr(dir[9].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_TLS_SIZE), buf);
+
+		tools.DWordToTStr(dir[10].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_LOAD_CONFIG_RVA), buf);
+		tools.DWordToTStr(dir[10].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_LOAD_CONFIG_SIZE), buf);
+
+		tools.DWordToTStr(dir[11].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_BOUND_IMPORT_RVA), buf);
+		tools.DWordToTStr(dir[11].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_BOUND_IMPORT_SIZE), buf);
+
+		tools.DWordToTStr(dir[12].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_IAT_RVA), buf);
+		tools.DWordToTStr(dir[12].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_IAT_SIZE), buf);
+
+		tools.DWordToTStr(dir[13].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_DELAY_IMPORT_RVA), buf);
+		tools.DWordToTStr(dir[13].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_DELAY_IMPORT_SIZE), buf);
+
+		tools.DWordToTStr(dir[14].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_COM_DESCRIPTOR_RVA), buf);
+		tools.DWordToTStr(dir[14].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_COM_DESCRIPTOR_SIZE), buf);
+
+		tools.DWordToTStr(dir[15].VirtualAddress, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_RESERVE_RVA), buf);
+		tools.DWordToTStr(dir[15].Size, buf, MAX_PATH);
+		SetWindowText(GetDlgItem(hwnd, IDC_EDIT_RESERVE_SIZE), buf);
+	}
+	return TRUE;
+	case WM_COMMAND:
+	{
+		switch (LOWORD(wParam))
+		{
+		case IDC_BUTTON_DIR_EXIT:
+			EndDialog(hwnd, 0);
+			break;
+		case IDC_BUTTON_EXPORT_MORE:
+			break;
+		case IDC_BUTTON_IMPORT_MORE:
+			break;
+		case IDC_BUTTON_RESOURCE_MORE:
+			break;
+		case IDC_BUTTON_BASERELOC_MORE:
+			break;
+		case IDC_BUTTON_BOUND_IMPORT_MORE:
+			break;
+		case IDC_BUTTON_IAT_MORE:
+			break;
+		}
+	}
+	return TRUE;
+	}
+	return FALSE;
+}
+
+/**
  * ½Ú±íµ¯´°
  */
 INT_PTR CALLBACK SectionDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -316,6 +441,7 @@ INT_PTR CALLBACK PeInfoDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			EndDialog(hwnd, 0);
 			break;
 		case IDC_BUTTON_PE_INFO_DIR:
+			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG_DIR), hwnd, DirDlgProc);
 			break;
 		case IDC_BUTTON_PE_INFO_SECTION:
 			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG_SECTION), hwnd, SectionDlgProc);
@@ -485,7 +611,7 @@ INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			ofn.hwndOwner = NULL;
 			ofn.lpstrFile = exePath;
 			ofn.nMaxFile = MAX_PATH;
-			ofn.lpstrFilter = TEXT("EXE Files (*.exe)\0*.exe\0");
+			ofn.lpstrFilter = TEXT("All Files (*.*)\0*.*\0");
 			ofn.nFilterIndex = 1;
 			ofn.lpstrFileTitle = NULL;
 			ofn.nMaxFileTitle = 0;
