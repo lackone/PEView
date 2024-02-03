@@ -7,6 +7,7 @@
 #define IDD_DIALOG_PE_INFO              105
 #define IDD_DIALOG_SECTION              107
 #define IDD_DIALOG_DIR                  109
+#define IDD_DIALOG_DETAIL               111
 #define IDC_BUTTON_PE_VIEW              1001
 #define IDC_BUTTON_ABOUT                1002
 #define IDC_BUTTON_EXIT                 1003
@@ -64,10 +65,11 @@
 #define IDC_EDIT_COM_DESCRIPTOR_RVA     1040
 #define IDC_EDIT_COM_DESCRIPTOR_SIZE    1041
 #define IDC_EDIT_RESERVE_RVA            1042
-#define IDC_EDIT32                      1043
 #define IDC_EDIT_RESERVE_SIZE           1043
 #define IDC_BUTTON_IMPORT_MORE          1044
 #define IDC_BUTTON_EXPORT_MORE          1045
+#define IDC_EDIT1                       1045
+#define IDC_EDIT_DETAIL                 1045
 #define IDC_BUTTON_RESOURCE_MORE        1046
 #define IDC_BUTTON_BASERELOC_MORE       1047
 #define IDC_BUTTON_IAT_MORE             1048
@@ -77,9 +79,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        111
+#define _APS_NEXT_RESOURCE_VALUE        113
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1045
+#define _APS_NEXT_CONTROL_VALUE         1046
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

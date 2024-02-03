@@ -238,3 +238,87 @@ IMAGE_DATA_DIRECTORY* PETools::GetDataDirectory(IN LPVOID pFileBuffer)
 
 	return dir;
 }
+
+/**
+ * 导出表详情
+ */
+_tstring PETools::GetExportDetail(IN LPVOID pFileBuffer)
+{
+	//暂时未实现，有兴趣的可以自已实现
+
+	_tstring str;
+
+	str += TEXT("我姓石1");
+
+	return str;
+}
+
+/**
+ * 导入表详情
+ */
+_tstring PETools::GetImportDetail(IN LPVOID pFileBuffer)
+{
+	//暂时未实现，有兴趣的可以自已实现
+
+	_tstring str;
+
+	str += TEXT("我姓石2");
+
+	return str;
+}
+
+/**
+ * 资源详情
+ */
+_tstring PETools::GetResourceDetail(IN LPVOID pFileBuffer)
+{
+	//暂时未实现，有兴趣的可以自已实现
+
+	_tstring str;
+
+	str += TEXT("我姓石3");
+
+	return str;
+}
+
+/**
+ * 重定位详情
+ */
+_tstring PETools::GetBaseRelocDetail(IN LPVOID pFileBuffer)
+{
+	//暂时未实现，有兴趣的可以自已实现
+
+	_tstring str;
+
+	str += TEXT("我姓石4");
+
+	return str;
+}
+
+/**
+ * 绑定导入详情
+ */
+_tstring PETools::GetBoundImportDetail(IN LPVOID pFileBuffer)
+{
+	//暂时未实现，有兴趣的可以自已实现
+
+	_tstring str;
+
+	str += TEXT("我姓石5");
+
+	return str;
+}
+
+/**
+ * IAT详情
+ */
+_tstring PETools::GetIATDetail(IN LPVOID pFileBuffer)
+{
+	//暂时未实现，有兴趣的可以自已实现
+
+	_tstring str;
+
+	str += TEXT("我姓石6");
+
+	return str;
+}

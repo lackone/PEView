@@ -3,6 +3,13 @@
 #include <windows.h>
 #include <stdio.h>
 #include <vector>
+#include <string>
+
+#ifdef _UNICODE
+#define _tstring std::wstring
+#else
+#define _tstring std::string
+#endif
 
 typedef struct
 {
@@ -37,5 +44,17 @@ public:
 	std::vector<SectionItem> GetSectionList(IN LPVOID pFileBuffer);
 	//获取目录
 	IMAGE_DATA_DIRECTORY* GetDataDirectory(IN LPVOID pFileBuffer);
+	//导出表详情
+	_tstring GetExportDetail(IN LPVOID pFileBuffer);
+	//导入表详情
+	_tstring GetImportDetail(IN LPVOID pFileBuffer);
+	//资源详情
+	_tstring GetResourceDetail(IN LPVOID pFileBuffer);
+	//重定位详情
+	_tstring GetBaseRelocDetail(IN LPVOID pFileBuffer);
+	//绑定导入详情
+	_tstring GetBoundImportDetail(IN LPVOID pFileBuffer);
+	//IAT详情
+	_tstring GetIATDetail(IN LPVOID pFileBuffer);
 };
 

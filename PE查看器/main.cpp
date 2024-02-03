@@ -21,6 +21,7 @@ ProcessTools pt;
 Tools tools;
 PETools pe;
 //进程列表排序
+BOOL nameAsc = TRUE;
 BOOL pidAsc = TRUE;
 BOOL imageBaseAsc = TRUE;
 BOOL imageSizeAsc = TRUE;
@@ -31,6 +32,8 @@ DWORD LastRowPID = -1;
 //所选EXE的路径
 TCHAR exePath[MAX_PATH]{ 0 };
 LPVOID exeFileBuffer = NULL;
+//详情字符串
+_tstring g_DetailStr;
 
 /**
  * 更新进程列表
@@ -207,6 +210,27 @@ INT_PTR CALLBACK AboutDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 /**
  * 目录弹窗
  */
+INT_PTR CALLBACK DetailDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_INITDIALOG:
+	{
+		HWND edit = GetDlgItem(hwnd, IDC_EDIT_DETAIL);
+
+		SetWindowText(edit, g_DetailStr.c_str());
+	}
+	return TRUE;
+	case WM_CLOSE:
+		EndDialog(hwnd, 0);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/**
+ * 目录弹窗
+ */
 INT_PTR CALLBACK DirDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -311,17 +335,47 @@ INT_PTR CALLBACK DirDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			EndDialog(hwnd, 0);
 			break;
 		case IDC_BUTTON_EXPORT_MORE:
-			break;
+		{
+			g_DetailStr = pe.GetExportDetail(exeFileBuffer);
+
+			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG_DETAIL), hwnd, DetailDlgProc);
+		}
+		break;
 		case IDC_BUTTON_IMPORT_MORE:
-			break;
+		{
+			g_DetailStr = pe.GetImportDetail(exeFileBuffer);
+
+			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG_DETAIL), hwnd, DetailDlgProc);
+		}
+		break;
 		case IDC_BUTTON_RESOURCE_MORE:
-			break;
+		{
+			g_DetailStr = pe.GetResourceDetail(exeFileBuffer);
+
+			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG_DETAIL), hwnd, DetailDlgProc);
+		}
+		break;
 		case IDC_BUTTON_BASERELOC_MORE:
-			break;
+		{
+			g_DetailStr = pe.GetBaseRelocDetail(exeFileBuffer);
+
+			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG_DETAIL), hwnd, DetailDlgProc);
+		}
+		break;
 		case IDC_BUTTON_BOUND_IMPORT_MORE:
-			break;
+		{
+			g_DetailStr = pe.GetBoundImportDetail(exeFileBuffer);
+
+			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG_DETAIL), hwnd, DetailDlgProc);
+		}
+		break;
 		case IDC_BUTTON_IAT_MORE:
-			break;
+		{
+			g_DetailStr = pe.GetIATDetail(exeFileBuffer);
+
+			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG_DETAIL), hwnd, DetailDlgProc);
+		}
+		break;
 		}
 	}
 	return TRUE;
@@ -467,20 +521,26 @@ int CALLBACK CompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	ListView_GetItemText(hListProcess, lParam1, columnIndex, data1Str, MAX_PATH);
 	ListView_GetItemText(hListProcess, lParam2, columnIndex, data2Str, MAX_PATH);
 
-	DWORD data1 = _ttoi(data1Str);
-	DWORD data2 = _ttoi(data2Str);
+	if (columnIndex == 0)
+	{
+		return _tcsicmp(data1Str, data2Str) ? (nameAsc ? 1 : 0) : (nameAsc ? 0 : 1);
+	}
+	else {
+		DWORD data1 = _ttoi(data1Str);
+		DWORD data2 = _ttoi(data2Str);
 
-	if (columnIndex == 1)
-	{
-		return data1 > data2 ? (pidAsc ? 1 : 0) : (pidAsc ? 0 : 1);
-	}
-	else if (columnIndex == 2)
-	{
-		return data1 > data2 ? (imageBaseAsc ? 1 : 0) : (imageBaseAsc ? 0 : 1);
-	}
-	else if (columnIndex == 3)
-	{
-		return data1 > data2 ? (imageSizeAsc ? 1 : 0) : (imageSizeAsc ? 0 : 1);
+		if (columnIndex == 1)
+		{
+			return data1 > data2 ? (pidAsc ? 1 : 0) : (pidAsc ? 0 : 1);
+		}
+		else if (columnIndex == 2)
+		{
+			return data1 > data2 ? (imageBaseAsc ? 1 : 0) : (imageBaseAsc ? 0 : 1);
+		}
+		else if (columnIndex == 3)
+		{
+			return data1 > data2 ? (imageSizeAsc ? 1 : 0) : (imageSizeAsc ? 0 : 1);
+		}
 	}
 }
 
@@ -581,7 +641,11 @@ INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			NMLISTVIEW* pNMListView = (NMLISTVIEW*)lParam;
 			LastColumnIndex = pNMListView->iSubItem;
-			if (pNMListView->iSubItem == 1)
+			if (pNMListView->iSubItem == 0)
+			{
+				nameAsc = !nameAsc;
+			}
+			else if (pNMListView->iSubItem == 1)
 			{
 				pidAsc = !pidAsc;
 			}
